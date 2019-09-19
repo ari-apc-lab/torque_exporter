@@ -7,7 +7,7 @@ Allow a server to collect metrics from TORQUE and expose them in Prometheus form
 
 ```
 go get github.com/ari-apc-lab/torque_exporter
-$GOPATH/src/github.com/ari-apc-lab/torque_exporter/utils/install.sh
+go install github.com/ari-apc-lab/torque_exporter
 ```
 
 ## Usage
@@ -15,13 +15,32 @@ $GOPATH/src/github.com/ari-apc-lab/torque_exporter/utils/install.sh
 ```
 torque_exporter -host=<HOST> -ssh-user=<USER> -ssh-password=<PASSWD> [-listen-address=:<PORT>] [-countrytz=<TZ>] [-log.level=<LOGLEVEL>]
 ```
-
 ### Defaults
 
 \<PORT\>: `:9100`  
 \<HOST\>: `localhost`, not supported  
 \<TZ\>: `Europe/Madrid`  
 \<LOGLEVEL\>: `error`  
+
+## Debug
+
+delve works nicely:
+https://github.com/go-delve/delve/blob/master/Documentation/cli/getting_started.md
+
+Once installed, debug it by:
+
+```
+dlv debug github.com/ari-apc-lab/torque_exporter -- -host=<HOST> -ssh-user=<USER> -ssh-password=<PASSWD>
+```
+Set a breakpoint like this (for example on my machine):
+
+(dlv) b C:\dev\gopath\src\github.com\spiros-atos\torque_exporter\qstat.go:111
+
+Run the program (continue) like this:
+
+(dlv) c
+
+Then in another terminal window (or browser of course) "visit" localhost:9100/metrics. This will break at the above set breakpoint from where you can then 'n' (execute next line), 's' (step into function), ... etc. (see gdb, pdb, or delve's documentation).
 
 ## License
 
