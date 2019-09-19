@@ -1,3 +1,27 @@
+/*
+ * Copyright (C) 2019  Atos Spain SA. All rights reserved.
+ *
+ * This file is part of torque_exporter.
+ *
+ * torque_exporter is free software: you can redistribute it and/or modify it 
+ * under the terms of the Apache License, Version 2.0 (the License);
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * The software is provided "AS IS", without any warranty of any kind, express 
+ * or implied, including but not limited to the warranties of merchantability, 
+ * fitness for a particular purpose and noninfringement, in no event shall the 
+ * authors or copyright holders be liable for any claim, damages or other 
+ * liability, whether in action of contract, tort or otherwise, arising from, 
+ * out of or in connection with the software or the use or other dealings in the 
+ * software.
+ *
+ * See DISCLAIMER file for the full disclaimer information and LICENSE and 
+ * LICENSE-AGREEMENT files for full license information in the project root.
+ *
+ * Authors:  Atos Research and Innovation, Atos SPAIN SA
+ */
+
 package ssh
 
 import (
@@ -82,14 +106,16 @@ func NewSSHConfigByAgent(user, host string, port int) *SSHConfig {
 }
 
 func (config *SSHConfig) NewClient() (*SSHClient, error) {
-	client, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", config.Host, config.Port), config.Config)
+	client, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", config.Host, 
+		config.Port), config.Config)
 	if err != nil {
 		return nil, err
 	}
 	return &SSHClient{client}, nil
 }
 
-func (client *SSHClient) OpenSession(inBuffer, outBuffer, errBuffer *bytes.Buffer) (*SSHSession, error) {
+func (client *SSHClient) OpenSession(inBuffer, outBuffer, 
+		errBuffer *bytes.Buffer) (*SSHSession, error) {
 	session, err := client.NewSession()
 	if err != nil {
 		return nil, err
@@ -107,7 +133,8 @@ func (client *SSHClient) OpenSession(inBuffer, outBuffer, errBuffer *bytes.Buffe
 	}
 
 	// Setup the buffers
-	ses := &SSHSession{Session: session, InBuffer: inBuffer, OutBuffer: outBuffer, ErrBuffer: errBuffer}
+	ses := &SSHSession{Session: session, InBuffer: inBuffer, 
+		OutBuffer: outBuffer, ErrBuffer: errBuffer}
 	if err := ses.setupSessionBuffers(); err != nil {
 		return nil, err
 	}
@@ -181,7 +208,8 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 }
 
 func SSHAgent() ssh.AuthMethod {
-	if sshAgent, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK")); err == nil {
+	if sshAgent, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK")); 
+		err == nil {
 		return ssh.PublicKeysCallback(agent.NewClient(sshAgent).Signers)
 	}
 	return nil

@@ -1,3 +1,26 @@
+/*
+ * Copyright (C) 2019  Atos Spain SA. All rights reserved.
+ *
+ * This file is part of torque_exporter.
+ *
+ * torque_exporter is free software: you can redistribute it and/or modify it 
+ * under the terms of the Apache License, Version 2.0 (the License);
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * The software is provided "AS IS", without any warranty of any kind, express 
+ * or implied, including but not limited to the warranties of merchantability, 
+ * fitness for a particular purpose and noninfringement, in no event shall the 
+ * authors or copyright holders be liable for any claim, damages or other 
+ * liability, whether in action of contract, tort or otherwise, arising from, 
+ * out of or in connection with the software or the use or other dealings in the 
+ * software.
+ *
+ * See DISCLAIMER file for the full disclaimer information and LICENSE and 
+ * LICENSE-AGREEMENT files for full license information in the project root.
+ *
+ * Authors:  Atos Research and Innovation, Atos SPAIN SA
+ */
 
 package main
 
@@ -26,7 +49,6 @@ const (
 )
 
 const (
-	// acctCommand = "sacct -n -a -X -o \"JobIDRaw,JobName%%20,User%%20,Partition%%20,State%%20\" -S%02d:%02d:%02d -sBF,CA,CD,CF,F,NF,PR,RS,S,TO | grep -v 'PENDING\\|COMPLETING\\|RUNNING' | uniq"
 	qstatCommand = "qstat -u xeuspimi"
 )
 
@@ -103,8 +125,6 @@ func (sc *TorqueCollector) collectQstat(ch chan<- prometheus.Metric) {
 				sc.userJobs,
 				prometheus.GaugeValue,
 				float64(status),
-				// fields[aJOBID], fields[aNAME], fields[aUSERNAME], fields[aPARTITION],
-				// fields[aJOBID], fields[aJOBNAME], fields[aUSERNAME], fields[aQUEUE],
 				fields[aJOBID], 
 				fields[aUSERNAME], 
 				fields[aJOBNAME], 
@@ -132,7 +152,8 @@ func qstatLineParser(line string) []string {
 	fields := strings.Fields(line)
 
 	if len(fields) < aFIELDS {
-		log.Warnf("qstat line parse failed (%s): %d fields expected, %d parsed", line, aFIELDS, len(fields))
+		log.Warnf("qstat line parse failed (%s): %d fields expected, %d parsed", 
+			line, aFIELDS, len(fields))
 		return nil
 	}
 

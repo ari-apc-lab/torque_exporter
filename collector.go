@@ -1,3 +1,27 @@
+/*
+ * Copyright (C) 2019  Atos Spain SA. All rights reserved.
+ *
+ * This file is part of torque_exporter.
+ *
+ * torque_exporter is free software: you can redistribute it and/or modify it 
+ * under the terms of the Apache License, Version 2.0 (the License);
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * The software is provided "AS IS", without any warranty of any kind, express 
+ * or implied, including but not limited to the warranties of merchantability, 
+ * fitness for a particular purpose and noninfringement, in no event shall the 
+ * authors or copyright holders be liable for any claim, damages or other 
+ * liability, whether in action of contract, tort or otherwise, arising from, 
+ * out of or in connection with the software or the use or other dealings in the 
+ * software.
+ *
+ * See DISCLAIMER file for the full disclaimer information and LICENSE and 
+ * LICENSE-AGREEMENT files for full license information in the project root.
+ *
+ * Authors:  Atos Research and Innovation, Atos SPAIN SA
+ */
+
 package main
 
 import (
@@ -28,7 +52,7 @@ const (
 /*
 from man qstat:
  -  the job state:
-       C -     Job is completed after having run/
+       C -  Job is completed after having run/
        E -  Job is exiting after having run.
        H -  Job is held.
        Q -  job is queued, eligible to run or routed.
@@ -52,9 +76,8 @@ var StatusDict = map[string]int{
 }
 
 type TorqueCollector struct {
-	// waitTime          *prometheus.Desc
-	// status            *prometheus.Desc
 	queueRunning      *prometheus.Desc
+	// queueCompleted    *prometheus.Desc
 	userJobs          *prometheus.Desc
 	// jobDetails        *prometheus.Desc
 	partitionNodes    *prometheus.Desc
@@ -65,45 +88,8 @@ type TorqueCollector struct {
 	lasttime          time.Time
 }
 
-// func NewTorqueCollector(host, sshUser, sshPass, timeZone string) *TorqueCollector {
-// 	newTorqueCollector := &TorqueCollector{
-// 		waitTime: prometheus.NewDesc(
-// 			"job_wait_time",
-// 			"Time that the job waited, or is estimated to wait",
-// 			[]string{"jobid", "name", "username", "partition", "numcpus", "state"},
-// 			nil,
-// 		),
-// 		status: prometheus.NewDesc(
-// 			"job_status",
-// 			"Status of the job",
-// 			[]string{"jobid", "name", "username", "partition"},
-// 			nil,
-// 		),
-// 		partitionNodes: prometheus.NewDesc(
-// 			"partition_nodes",
-// 			"Nodes of the partition",
-// 			[]string{"partition", "availability", "state"},
-// 			nil,
-// 		),
-// 		sshConfig: ssh.NewSSHConfigByPassword(
-// 			sshUser,
-// 			sshPass,
-// 			host,
-// 			22,
-// 		),
-// 		sshClient:         nil,
-// 		alreadyRegistered: make([]string, 0),
-// 	}
-// 	var err error
-// 	newTorqueCollector.timeZone, err = time.LoadLocation(timeZone)
-// 	if err != nil {
-// 		log.Fatalln(err.Error())
-// 	}
-// 	newTorqueCollector.setLastTime()
-// 	return newTorqueCollector
-// }
-
-func NewerTorqueCollector(host, sshUser, sshPass, timeZone string) *TorqueCollector {
+func NewerTorqueCollector(host, sshUser, sshPass, 
+		timeZone string) *TorqueCollector {
 	newerTorqueCollector := &TorqueCollector{
 		queueRunning: prometheus.NewDesc(
 			"te_showq_r",
@@ -117,22 +103,6 @@ func NewerTorqueCollector(host, sshUser, sshPass, timeZone string) *TorqueCollec
 			[]string{"jobid", "username", "jobname", "status"},
 			nil,
 		),
-		// jobDetails: prometheus.NewDesc(
-		// 	"te_qstat_f",
-		// 	"job details",
-		// 	[]string{"job_name", 
-		// 			 "job_owner", 
-		// 			 "job_state",
-		// 			 "ctime",
-		// 			 "mtime",
-		// 			 "output_path",
-		// 			 "qtime",
-		// 			 "euser",
-		// 			 "queue_type",
-		// 			 "etime",
-		// 			 "submit_args"},
-		// 	nil,
-		// ),
 		partitionNodes: prometheus.NewDesc(
 			"te_qstat_f",
 			"job details",
@@ -161,9 +131,8 @@ func NewerTorqueCollector(host, sshUser, sshPass, timeZone string) *TorqueCollec
 // through the ch channel.
 // It implements collector interface
 func (sc *TorqueCollector) Describe(ch chan<- *prometheus.Desc) {
-	// ch <- sc.waitTime
-	// ch <- sc.status
 	ch <- sc.queueRunning
+	// ch <- sc.queueCompleted
 	ch <- sc.userJobs
 	// ch <- sc.jobDetails
 	ch <- sc.partitionNodes
@@ -190,7 +159,8 @@ func (sc *TorqueCollector) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
-func (sc *TorqueCollector) executeSSHCommand(cmd string) (*ssh.SSHSession, error) {
+func (sc *TorqueCollector) executeSSHCommand(cmd string) (*ssh.SSHSession, 
+		error) {
 	command := &ssh.SSHCommand{
 		Path: cmd,
 		// Env:    []string{"LC_DIR=/usr"},
@@ -280,7 +250,8 @@ func parseTorqueTime(field string) (uint64, error) {
 // nextLineIterator returns a function that iterates
 // over an io.Reader object returning each line  parsed
 // in fields following the parser method passed as argument
-func nextLineIterator(buf io.Reader, parser func(string) []string) func() ([]string, error) {
+func nextLineIterator(buf io.Reader, 
+		parser func(string) []string) func() ([]string, error) {
 	var buffer = buf.(*bytes.Buffer)
 	var parse = parser
 	return func() ([]string, error) {

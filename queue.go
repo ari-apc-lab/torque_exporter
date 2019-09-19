@@ -1,3 +1,27 @@
+/*
+ * Copyright (C) 2019  Atos Spain SA. All rights reserved.
+ *
+ * This file is part of torque_exporter.
+ *
+ * torque_exporter is free software: you can redistribute it and/or modify it 
+ * under the terms of the Apache License, Version 2.0 (the License);
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * The software is provided "AS IS", without any warranty of any kind, express 
+ * or implied, including but not limited to the warranties of merchantability, 
+ * fitness for a particular purpose and noninfringement, in no event shall the 
+ * authors or copyright holders be liable for any claim, damages or other 
+ * liability, whether in action of contract, tort or otherwise, arising from, 
+ * out of or in connection with the software or the use or other dealings in the 
+ * software.
+ *
+ * See DISCLAIMER file for the full disclaimer information and LICENSE and 
+ * LICENSE-AGREEMENT files for full license information in the project root.
+ *
+ * Authors:  Atos Research and Innovation, Atos SPAIN SA
+ */
+
 package main
 
 import (
@@ -73,7 +97,8 @@ func (sc *TorqueCollector) collectQueue(ch chan<- prometheus.Metric) {
 	var currentCommand string
 
 	if len(sc.alreadyRegistered) > 0 {
-		currentCommand = fmt.Sprintf(queueCommand+" | grep -v '%s' | uniq", strings.Join(sc.alreadyRegistered, "\\|"))
+		currentCommand = fmt.Sprintf(queueCommand+" | grep -v '%s' | uniq", 
+			strings.Join(sc.alreadyRegistered, "\\|"))
 		sc.alreadyRegistered = make([]string, 0) // free memory
 	} else {
 		currentCommand = queueCommand
@@ -93,7 +118,6 @@ func (sc *TorqueCollector) collectQueue(ch chan<- prometheus.Metric) {
 				log.Errorln(msg)
 			} else {
 				log.Debugln("No queued jobs collected")
-				//TODO(emepetres) ¿¿supply metrics when no job data is available??
 			}
 			return
 		}
@@ -183,8 +207,6 @@ func (sc *TorqueCollector) collectQueue(ch chan<- prometheus.Metric) {
 }
 
 func squeueLineParser(line string) []string {
-
-	// TODO: this works well for all fields except time which has spaces within the field
 	result := strings.Fields(line)	
 	return result
 }
