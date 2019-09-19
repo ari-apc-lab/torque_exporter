@@ -24,8 +24,7 @@ torque_exporter -host=<HOST> -ssh-user=<USER> -ssh-password=<PASSWD> [-listen-ad
 
 ## Debug
 
-delve works nicely:
-https://github.com/go-delve/delve/blob/master/Documentation/cli/getting_started.md
+![Delve](https://github.com/go-delve/delve) works nicely.
 
 Once installed, debug it by:
 
