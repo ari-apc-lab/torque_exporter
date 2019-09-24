@@ -34,7 +34,7 @@ dlv debug github.com/ari-apc-lab/torque_exporter -- -host=<HOST> -ssh-user=<USER
 Set a breakpoint like this (for example on my machine):
 
 ```
-(dlv) b C:\dev\gopath\src\github.com\spiros-atos\torque_exporter\qstat.go:111
+(dlv) b C:\dev\gopath\src\github.com\ari-apc-lab\torque_exporter\qstat.go:111
 ```
 
 Run the program (continue) like this:
@@ -43,7 +43,7 @@ Run the program (continue) like this:
 (dlv) c
 ```
 
-Then in another terminal window (or browser of course) `visit" 'localhost:9100/metrics`. This will break at the above set breakpoint from where you can then 'n' (execute next line), 's' (step into function), ... etc. (see gdb, pdb, or delve's documentation).
+Then in another terminal window (or browser of course) visit `localhost:9100/metrics`. This will break at the above set breakpoint from where you can then 'n' (execute next line), 's' (step into function), ... etc. (see gdb, pdb, or delve's documentation).
 
 ## License
 
