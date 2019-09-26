@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: torque-exporter
+spec:
+  selector:
+    matchLabels:
+      app: torque-exporter
+  template:
+    metadata:
+      labels:
+        app: torque-exporter
+    spec:
+      containers:
+      - image: registry.test.euxdat.eu/euxdat/torque_exporter
+        name: torque-exporter
+      imagePullSecrets:
+      - name: euxdatregistrykey
+
