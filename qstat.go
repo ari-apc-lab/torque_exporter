@@ -49,7 +49,7 @@ const (
 )
 
 const (
-	qstatCommand = "qstat -u xeuspimi"
+	qstatCommand = "qstat -u xeupmara"
 )
 
 func (sc *TorqueCollector) collectQstat(ch chan<- prometheus.Metric) {
